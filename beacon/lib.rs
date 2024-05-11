@@ -47,7 +47,6 @@ mod gateway {
             }
 
             self.blocks.insert(best_etf_block_number, &serialized_sig);
-            // then make a cross-contract call to a game contract
 
             Ok(())
         }

@@ -42,12 +42,13 @@ use w3f_bls::{
 #[subxt::subxt(runtime_metadata_path = "./artifacts/metadata.scale")]
 pub mod etf {}
 
-pub const CONTRACT_ADDRESS: &str = "0x9a4527db158b9ee6f2458152cd09698bd95584fbf4a906b8fa10b057a1133418";
+pub const CONTRACT_ADDRESS: &str = "0x6372e8d125e45e067a87cdd00cfaaadef42b11009c6c749cc6b5dc7ded2a8cfd";
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     println!("🎲 Ideal Network Relayer: initializing");
-    let rpc_client = RpcClient::from_url("ws://localhost:9944").await?;
+    // let rpc_client = RpcClient::from_url("ws://localhost:9944").await?;
+    let rpc_client = RpcClient::from_url("wss://etf1.idealabs.network:443").await?;
     println!("🔗 RPC Client: connection established");
     run::<TinyBLS377>(rpc_client).await?;
     Ok(())
