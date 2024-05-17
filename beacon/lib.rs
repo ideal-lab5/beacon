@@ -15,6 +15,8 @@ mod gateway {
         authorized_caller: AccountId,
         /// stores a subset of ETF signatures/proofs
         blocks: Mapping<BlockNumber, OpaqueSignature>,
+        /// latest block number encountered
+        latest_block_number: BlockNumber,
     }
 
     #[derive(Clone, PartialEq, Debug, scale::Decode, scale::Encode)]
@@ -32,7 +34,13 @@ mod gateway {
             Self {
                 authorized_caller,
                 blocks: Mapping::default(),
+                latest_block_number: 0,
             }
+        }
+
+        #[ink(message)]
+        pub fn get_latest_block_number(&self) -> BlockNumber {
+            self.latest_block_number
         }
 
         #[ink(message, payable)]
@@ -47,6 +55,7 @@ mod gateway {
             }
 
             self.blocks.insert(best_etf_block_number, &serialized_sig);
+            self.latest_block_number = best_etf_block_number;
 
             Ok(())
         }
