@@ -50,9 +50,11 @@ mod gateway {
             serialized_sig: Vec<u8>,
         ) -> Result<(), Error> {
             let caller = self.env().caller();
-            if caller != self.authorized_caller {
-                return Err(Error::InvalidOrigin);
-            }
+            // verify the signature
+            
+            // if caller != self.authorized_caller {
+            //     return Err(Error::InvalidOrigin);
+            // }
 
             self.blocks.insert(best_etf_block_number, &serialized_sig);
             self.latest_block_number = best_etf_block_number;
