@@ -40,7 +40,7 @@ use w3f_bls::{
 };
 
 #[cfg(not(feature = "contract"))]
-use crate::etf::randomness_beacon::calls::types::WriteBlock;
+use crate::etf::randomness_beacon::calls::types::WritePulse;
 
 // Generate an interface that we can use from the node's metadata.
 #[subxt::subxt(runtime_metadata_path = "./artifacts/metadata.scale")]
@@ -98,7 +98,7 @@ async fn run<E: EngineBLS>(
             VersionedFinalityProof::V1(signed_commitment) => {
                 let best_block_number = signed_commitment.commitment.block_number;
                 // run every 10 blocks
-                if best_block_number % 10 == 0 {
+                // if best_block_number % 10 == 0 {
                     // TODO: this is a single validator setup, so no interpolation
                     let sigs = signed_commitment.signatures;
                     // let sig = interpolate(sigs);
@@ -118,17 +118,16 @@ async fn run<E: EngineBLS>(
                                 // so lets serialize it as bytes here?
                                 let mut sig_bytes = Vec::new();
                                 sig.serialize_compressed(&mut sig_bytes).unwrap();
-
                                 let call_tx = publish(best_block_number, &sig_bytes);
                                 
                                 // let tx_params = Params::new()
-                                //     // .tip(1_000)
-                                //     // .mortal(current_block.header(), 32)
-                                //     .build();
+                                    // .tip(1_000)
+                                    // .mortal(current_block.header(), 32)
+                                    // .build();
 
 
                                 // let balance_transfer_tx = polkadot::tx().balances().transfer_allow_death(dest, 10_000);
-                                println!("Submitting transactions for block # {:?}", best_block_number);
+                                println!("Submitting beacon pulse at block # {:?}", best_block_number);
                                 let _ = client.tx().sign_and_submit_then_watch_default(&call_tx, &dev::alice())
                                     .await?
                                     .wait_for_finalized_success()
@@ -139,7 +138,7 @@ async fn run<E: EngineBLS>(
                             panic!("TODO: proper error handling: couldn't recover sig");
                         },
                     }
-                };
+                // };
             }
         }
     }
@@ -179,9 +178,9 @@ fn publish(
 fn publish(
     best_block_number: BlockNumber, 
     sig_bytes: &[u8]
-) -> subxt::tx::Payload<WriteBlock> {
-    etf::tx().randomness_beacon().write_block(
-        sig_bytes.to_vec(),
+) -> subxt::tx::Payload<WritePulse> {
+    etf::tx().randomness_beacon().write_pulse(
+        vec![sig_bytes.to_vec()],
         best_block_number,
     )
 }

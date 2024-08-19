@@ -6,14 +6,17 @@ A simple centralized beacon contract and trusted relayer to interpolate signatur
 
 ## Setup
 
-(Optional)
+1. install subxt
+```
+cargo install subxt-cli
+```
+
+2. (Optional) Generate metadata
 The following is required only if you need to generate metadata (e.g. the runtime has changed)
 0a. Run a local Ideal node
 0b. Once it is running and producing ETF blocks, generate metadata by running `./generate_metadata.sh` from the root directory.
 
-Either connecting to a local node or hosted one:
-1. Deploy the beacon contract and use the resulting address to get a public key (either with subkey or ss58.org)
-2. Insert the public key into the main.rs file (near the top), then execute:
+3. Run:
 
 ``` shell
 cargo run

@@ -2,7 +2,7 @@
 FROM rust:latest
 
 # Set the working directory inside the container
-WORKDIR /randomness-beacon-watcher
+WORKDIR /relayer
 
 # Copy your Rust project files into the container
 COPY . .
@@ -11,4 +11,4 @@ COPY . .
 RUN cargo build --release
 
 # Run the binary (adjust the binary name accordingly)
-ENTRYPOINT ["./target/release/randomness-beacon-watcher"]
+ENTRYPOINT ["./target/release/relayer"]

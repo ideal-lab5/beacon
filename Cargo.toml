@@ -1,6 +1,6 @@
 [package]
-name = "simple-relay"
-description = "A demo to listen to justficiation and run tlock"
+name = "relayer"
+description = "A simple centralized relayer that publishes IDN beacon pulses"
 version = "0.1.0"
 edition = "2021"
 
