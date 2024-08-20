@@ -39,6 +39,8 @@ use w3f_bls::{
     double::{DoublePublicKey, DoubleSignature},
 };
 
+use std::env;
+
 #[cfg(not(feature = "contract"))]
 use crate::etf::randomness_beacon::calls::types::WritePulse;
 
@@ -48,12 +50,13 @@ pub mod etf {}
 
 pub type BlockNumber = u32;
 
-pub const CONTRACT_ADDRESS: &str = "0x6372e8d125e45e067a87cdd00cfaaadef42b11009c6c749cc6b5dc7ded2a8cfd";
-
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     println!("🎲 Ideal Network Relayer: initializing");
-    let rpc_client = RpcClient::from_url("ws://localhost:9944").await?;
+    let args: Vec<String> = env::args().collect();
+    println!("⏳ Attempting connection to {:?}", args[1]);
+    let rpc_client = RpcClient::from_url(args[1].clone()).await?;
+    // let rpc_client = RpcClient::from_url("ws://localhost:9944").await?;
     // let rpc_client = RpcClient::from_url("wss://etf1.idealabs.network:443").await?;
     println!("🔗 RPC Client: connection established");
     run::<TinyBLS377>(rpc_client).await?;
@@ -145,36 +148,6 @@ async fn run<E: EngineBLS>(
     Ok(())
 }
 
-#[cfg(feature = "contract")]
-fn publish(
-    best_block_number: BlockNumber, 
-    sig_bytes: &[u8],
-) -> subxt::tx::Payload<etf::contracts::calls::types::Call> {
-    // build the call_data to publish to a smnart contract
-    let sig_hex = array_bytes::bytes2hex("0x", sig_bytes);
-    let mut call_data = Vec::<u8>::new();
-    call_data.append(&mut (&blake2_256("write_block".as_bytes())[0..4]).to_vec());
-    call_data.append(&mut scale::Encode::encode(&(
-        best_block_number,
-        sig_hex
-    )));
-
-    let pubkey: [u8;32] = array_bytes::hex2bytes_unchecked(CONTRACT_ADDRESS)
-        .try_into().expect("The contract address must be valid.");
-    etf::tx().contracts().call(
-        MultiAddress::Id(AccountId32::from(pubkey)),
-        0, // value
-        etf::runtime_types::sp_weights::weight_v2::Weight {
-            ref_time: 1_000_000_000,
-            proof_size: u64::MAX / 2,
-        }, // gas_limit
-        None, // storage_deposit_limit
-        call_data,
-    )                           
-}
-
-
-#[cfg(not(feature = "contract"))]
 fn publish(
     best_block_number: BlockNumber, 
     sig_bytes: &[u8]

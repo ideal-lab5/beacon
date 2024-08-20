@@ -1,12 +1,29 @@
 # Beacon
 
-> This is a WIP.
+A simple centralized beacon relayer. It listens to randomness output from the Ideal Network and encodes pulses within a Substrate pallet (pallet-randomness-beacon);
 
-A simple centralized beacon contract and trusted relayer to interpolate signatures from the Ideal Network's justifications stream and make them available for on-chain protocols.
+## Run
 
-## Setup
+### Docker
 
-1. install subxt
+To run the beacon from docker
+
+``` shell
+docker pull ideallabs/relayer
+docker run --network host ideallabs/relayer [node_websocket_URI]
+```
+
+For example, to connect to a locally running node whose RPC is exposed on 9944:
+
+``` shell
+docker run --network host ideallabs/relayer ws://127.0.0.1:9944
+```
+
+### Build from Sources
+
+To build thje
+
+1. (optional) install subxt
 ```
 cargo install subxt-cli
 ```
@@ -19,10 +36,10 @@ The following is required only if you need to generate metadata (e.g. the runtim
 3. Run:
 
 ``` shell
-cargo run
+cargo run [node_websocket_uri]
 ```
 
-This will start the beacon. If it successfully connects to the network, it will listen for justification, interpolate them, and send the result as a signature to the beacon contract.
+This will start the beacon relayer. If it successfully connects to the network, it will listen for justifications, interpolate them, and send the result as a signature to the beacon pallet.
 
 ## Testing
 
